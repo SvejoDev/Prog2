@@ -1,31 +1,29 @@
 package intro;
 
 public class Inst {
-	///instansvariabler
-	private double l;
-	private double w;
-	private String shape;
-	
-	///kontruktor
-	public Inst(String shape, double l, double w) {
-		this.shape = shape;
-		this.l = l;
-		this.w = w;
-	}
-	public double omkr() {
-		return 2*l + 2*w;
-	}
-	public double area() {
-		return l * w;
-	}
-	
-	public void setShape(String shape) {
-		this.shape = shape;
-	}
-	
+    private double l;
+    private double w;
+    private String shape;
+
+    // Konstruktor 1
+    public Inst(String shape, double l, double w) {
+        this.shape = shape;
+        this.l = l;
+        this.w = w;
+    }
+
+    // Konstruktor 2
+    public Inst(String shape, double s) {
+        this.shape = shape;
+        this.l = s;
+    }
+
+    // Metod för att beräkna omkrets (omkr)
+    public double omkr() {
+        return 2 * (l + w);
+    }
+
 	public String getShape() {
 		return shape;
 	}
-	
-
 }
