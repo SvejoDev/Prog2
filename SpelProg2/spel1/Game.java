@@ -20,6 +20,10 @@ public class Game implements KeyListener{
 	public Game(){
 		gameScreen.setKeyListener(this);
 		
+		//Y-led
+		keyDown.put("up", false);
+		keyDown.put("down", false);
+		//X-led
 		keyDown.put("left", false);
 		keyDown.put("right", false);
 		
@@ -37,7 +41,11 @@ public class Game implements KeyListener{
 		        player.setX(player.getX() + 5);
 		    if(keyDown.get("left"))
 			player.setX(player.getX() - 5);
-
+		    if(keyDown.get("up"))
+		        player.setY(player.getY() - 5);
+		    if(keyDown.get("down"))
+		        player.setY(player.getY() + 5);
+		    
 	}
 
 	public void render(){
@@ -67,6 +75,11 @@ public class Game implements KeyListener{
 	        keyDown.put("left", true);
 	     else if(key == KeyEvent.VK_RIGHT)
 	        keyDown.put("right", true);
+	     if(key == KeyEvent.VK_UP)
+		        keyDown.put("up", true);
+		  else if(key == KeyEvent.VK_DOWN)
+		        keyDown.put("down", true);
+		    	
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -76,6 +89,12 @@ public class Game implements KeyListener{
 	        keyDown.put("left", false);
 	     else if(key == KeyEvent.VK_RIGHT)
 	        keyDown.put("right", false);
+	     if(key == KeyEvent.VK_UP)
+		        keyDown.put("up", false);
+		     else if(key == KeyEvent.VK_DOWN)
+		        keyDown.put("down", false);
+	     
+	     
 	}
 
 	public static void main(String[] args) {
