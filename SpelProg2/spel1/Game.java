@@ -46,6 +46,7 @@ public class Game implements KeyListener{
 		    if(keyDown.get("down"))
 		        player.setY(player.getY() + 5);
 		    
+		    
 	}
 
 	public void render(){
