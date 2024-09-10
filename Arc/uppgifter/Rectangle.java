@@ -14,8 +14,8 @@ public class Rectangle extends Shape{
 	   }
 	 
 	   public void draw(Graphics2D g) {
-	      g.setColor(color);
-	      g.fillRect(xPos, yPos, width, height);
+	      g.setColor(getColor());
+	      g.fillRect(getxPos(), getyPos(), width, height);
 	   }
 	 
 	   public int getArea() {

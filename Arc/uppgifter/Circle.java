@@ -3,18 +3,18 @@ package uppgifter;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class Circle extends Shape {
+public class Circle extends Ellipse {
  	private int diameter;
  	
  	/** Konstruktor */
  	public Circle(int diameter, int xPos, int yPos, Color color) {
-    	   super(xPos, yPos, color); // anropar Shapes konstruktor
+    	   super(diameter, diameter, xPos, yPos, color); // anropar Shapes konstruktor
     	   this.diameter = diameter;
  	}
  
  	public void draw(Graphics2D g) {
-    	   g.setColor(color);
-    	   g.fillOval(xPos, yPos, diameter, diameter);
+    	   g.setColor(getColor());
+    	   g.fillOval(getxPos(), getyPos(), diameter, diameter);
  	}
  
  	public int getArea() {
@@ -23,7 +23,7 @@ public class Circle extends Shape {
  	}
 
       public int getOmk() {
-    	   int omk = (int) (Math.PI*diameter);
+    	   int omk = (int) (Math.PI*diameter); 
     	   return omk;
  	}
 }
