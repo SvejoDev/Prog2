@@ -14,7 +14,7 @@ public class IfaceTest implements Iface {
 		//Skapar en instans av klassen
 		
 		Iface ift = new IfaceTest();
-				System.out.println(ift.getInfo() + "" +ift.word);
+				System.out.println(ift.getInfo() + "" +ift.word); //med instansen av klassen kan jag använda defaulta metoder samt variablerna
 				
 ;
 	}
