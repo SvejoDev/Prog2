@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Home">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-22-openjdk">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -10,6 +10,7 @@
 	<classpathentry kind="src" path="SpelProg2"/>
 	<classpathentry kind="src" path="Arc"/>
 	<classpathentry kind="src" path="FilesAndSaves"/>
-	<classpathentry kind="lib" path="/Users/johansvensson/eclipse/se.egy.graphics.v6.9.6.jar"/>
+	<classpathentry kind="src" path="GUI"/>
+	<classpathentry kind="lib" path="/home/johan/Hämtningar/se.egy.graphics.v7.6.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
