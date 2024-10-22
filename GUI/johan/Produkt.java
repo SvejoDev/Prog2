@@ -1,4 +1,4 @@
-package Johan;
+package johan;
 
 import java.io.Serializable;
 
