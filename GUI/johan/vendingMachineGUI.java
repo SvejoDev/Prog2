@@ -1,13 +1,16 @@
 package johan;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -121,10 +124,11 @@ public class vendingMachineGUI extends JFrame{
     }
 
     private void restockProducts() {
-        // Temporär testdata - ska ersättas med CSV-inläsning
-        logic.addProdukt(new Drink("Cola", 20, 10));
-        logic.addProdukt(new Snack("Chips", 10, 10));
-        logic.addProdukt(new Pocketbok("Sea of Tranquility", 50, 5));
+        String filename = "products.csv"; // Din CSV-fils namn
+        List<Produkt> newProducts = Filehandler.loadProductsFromCSV(filename);
+        for (Produkt product : newProducts) {
+            logic.addProdukt(product);
+        }
         updateProductButtons();
     }
 
