@@ -14,6 +14,7 @@ public class VMLogik implements Serializable{
 		products = new ArrayList<>();
 		balance = 0.0;
 	}
+	
 	public void addProdukt(Produkt product) {
 		products.add(product);
 	}
@@ -43,12 +44,7 @@ public class VMLogik implements Serializable{
         return null;
     }
     private void logPurchase(Produkt product) {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String logEntry = String.format("%s - Purchased: %s, Price: %.2f kr, Tax: %.2f kr\n",
-                now.format(formatter), product.getName(), product.getPrice(), product.getTaxAmount());
-        
-        System.out.println(logEntry);
+        Filehandler.logPurchase(product);
     }
     public void restockProducts(List<Produkt> newProducts) {
     	for(Produkt newProduct : newProducts) {
@@ -61,3 +57,4 @@ public class VMLogik implements Serializable{
                 }    	}
     }
     }}
+

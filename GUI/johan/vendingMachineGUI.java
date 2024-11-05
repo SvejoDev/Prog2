@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -73,6 +74,71 @@ public class vendingMachineGUI extends JFrame{
 		});
 		balanceLabel = new JLabel("Totalt 0kr");
 	}
+	
+	///Nu jävlar kommer alla knappars logik, inshalla!
+
+    private void updateProductButtons() {
+        for (int i = 0; i < productButtons.length; i++) {
+            if (i < logic.getProducts().size()) {
+                Produkt product = logic.getProducts().get(i);
+                productButtons[i].setText(String.format("<html>%s<br>%.2f kr<br>Antal: %d</html>",
+                        product.getName(), product.getPrice(), product.getQuantity()));
+                productButtons[i].setEnabled(product.getQuantity() > 0);
+            } else {
+                productButtons[i].setText("Tom");
+                productButtons[i].setEnabled(false);
+            }
+        }
+        balanceLabel.setText(String.format("Totalt: %.2f kr", logic.getBalance()));
+    }
+
+    private void buyProduct(int index) {
+        Produkt boughtProduct = logic.buyProduct(index);
+        if (boughtProduct != null) {
+            JOptionPane.showMessageDialog(this,
+                    String.format("Du köpte %s för %.2f kr", boughtProduct.getName(), boughtProduct.getPrice()));
+            updateProductButtons();
+        } else {
+            JOptionPane.showMessageDialog(this, "Kunde inte köpa produkten. Kontrollera saldo och tillgänglighet.");
+        }
+    }
+
+    private void showAdminPanel() {
+        JDialog adminDialog = new JDialog(this, "Admin Panel", true);
+        adminDialog.setSize(300, 200);
+        adminDialog.setLayout(new GridLayout(3, 1));
+
+        JButton restockButton = new JButton("Fyll på produkter");
+        restockButton.addActionListener(e -> restockProducts());
+
+        JButton addMoneyButton = new JButton("Lägg till pengar");
+        addMoneyButton.addActionListener(e -> addMoney());
+
+        adminDialog.add(restockButton);
+        adminDialog.add(addMoneyButton);
+        adminDialog.setLocationRelativeTo(this);
+        adminDialog.setVisible(true);
+    }
+
+    private void restockProducts() {
+        // Temporär testdata - ska ersättas med CSV-inläsning
+        logic.addProdukt(new Drink("Cola", 20, 10));
+        logic.addProdukt(new Snack("Chips", 10, 10));
+        logic.addProdukt(new Pocketbok("Sea of Tranquility", 50, 5));
+        updateProductButtons();
+    }
+
+    private void addMoney() {
+        String input = JOptionPane.showInputDialog(this, "Ange belopp att lägga till:");
+        try {
+            double amount = Double.parseDouble(input);
+            logic.addMoney(amount);
+            updateProductButtons();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Ogiltigt belopp. Ange ett nummer.");
+        }
+    }
+	
 	private void layoutComponents() {
 		//gridbag såg häftigt ut i dokumentationen
 		mainPanel.setLayout(new GridBagLayout());
