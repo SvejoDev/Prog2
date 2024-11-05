@@ -4,6 +4,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,18 +23,29 @@ public class vendingMachineGUI extends JFrame{
 	private JButton[] productButtons;
 	private JButton adminbutton;
 	private JLabel balanceLabel;
+	private VMLogik logic;
 
 	public vendingMachineGUI() {
 		setTitle("Varuautomat");
 		setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setResizable(false);
-
+		
+		logic = Filehandler.loadState();
 		initComponents();
 		layoutComponents();
 
 		setVisible(true);
-	}
+		
+	    addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Filehandler.saveState(logic);
+            }
+        });
+
+        setVisible(true);
+    }
 	private void initComponents() {
 		mainPanel = new JPanel();
 		productButtons = new JButton[9];
