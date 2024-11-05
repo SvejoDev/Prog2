@@ -30,3 +30,5 @@ public static VMLogik loadState() {
 }
 
 }
+
+//TODO implementera CSV inläsningslogik

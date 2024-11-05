@@ -15,7 +15,7 @@ public class VMLogik implements Serializable{
 		balance = 0.0;
 	}
 	public void addProdukt(Produkt product) {
-		((List<Produkt>) product).add(product);
+		products.add(product);
 	}
 	public List<Produkt> getProducts(){
 		return products;
