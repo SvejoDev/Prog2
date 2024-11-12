@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -38,6 +39,7 @@ public class vendingMachineGUI extends JFrame{
 		logic = Filehandler.loadState();
 		initComponents();
 		layoutComponents();
+		updateProductButtons();
 
 		setVisible(true);
 		
@@ -51,31 +53,21 @@ public class vendingMachineGUI extends JFrame{
         setVisible(true);
     }
 	private void initComponents() {
-		mainPanel = new JPanel();
-		productButtons = new JButton[9];
-		for(int i = 0; i < productButtons.length; i++) {
-			productButtons[i] = new JButton("Produkt" + (i + 1));
-			productButtons[i].addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					//MetodKall för nästa vy
-
-				}
-
-			});
-		}
-		adminbutton = new JButton("Admin");
-		adminbutton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-		});
-		balanceLabel = new JLabel("Totalt 0kr");
+	    mainPanel = new JPanel();
+	    productButtons = new JButton[9];
+	    for(int i = 0; i < productButtons.length; i++) {
+	        final int index = i;
+	        productButtons[i] = new JButton();
+	        productButtons[i].addActionListener(e -> buyProduct(index));
+	    }
+	    
+	    adminbutton = new JButton("Admin");
+	    adminbutton.addActionListener(e -> showAdminPanel());
+	    balanceLabel = new JLabel("Totalt 0kr");
+	    
+	    // Ladda initiala produkter från CSV
+	    restockProducts();
+	    updateProductButtons();
 	}
 	
 	///Nu jävlar kommer alla knappars logik, inshalla!
@@ -122,10 +114,10 @@ public class vendingMachineGUI extends JFrame{
         adminDialog.setLocationRelativeTo(this);
         adminDialog.setVisible(true);
     }
-
+    
     private void restockProducts() {
-        String filename = "products.csv"; // Din CSV-fils namn
-        List<Produkt> newProducts = Filehandler.loadProductsFromCSV(filename);
+        String projectPath = System.getProperty("user.dir");
+        String csvFile = projectPath + File.separator + "GUI" + File.separator + "products.csv";        List<Produkt> newProducts = Filehandler.loadProductsFromCSV(csvFile);
         for (Produkt product : newProducts) {
             logic.addProdukt(product);
         }

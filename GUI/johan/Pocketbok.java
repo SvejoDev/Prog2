@@ -2,13 +2,11 @@ package johan;
 
 public class Pocketbok extends Produkt {
     public Pocketbok(String name, double price, int quantity) {
-        super(name, price, quantity, 0.12);
+        super(name, price, quantity, 0.06); // 6% moms för böcker
     }
 
-	@Override
-	public String getType() {
-		// TODO Auto-generated method stub
-		return "Pocketbok";
-	}
-
+    @Override
+    public String getType() {
+        return "Bok";
+    }
 }
