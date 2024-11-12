@@ -11,6 +11,6 @@
 	<classpathentry kind="src" path="Arc"/>
 	<classpathentry kind="src" path="FilesAndSaves"/>
 	<classpathentry kind="src" path="GUI"/>
-	<classpathentry kind="lib" path="/home/johan/Hämtningar/se.egy.graphics.v7.6.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/johan/Hämtningar/se.egy.graphics.v7.6.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -33,65 +33,41 @@ public class Filehandler {
     // Läser in produkter från CSV-fil
     public static List<Produkt> loadProductsFromCSV(String filename) {
         List<Produkt> products = new ArrayList<>();
+        System.out.println("Försöker läsa CSV-fil: " + filename);
         
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            // Läs första raden (header) för att identifiera kolumner
-            String headerLine = br.readLine();
-            if (headerLine == null) {
-                System.err.println("CSV-filen är tom");
-                return products;
-            }
+            // Skippa första raden (header)
+            br.readLine();
             
+            // Läs produktrader
             String line;
-            while ((line = br.readLine()) != null) {
+            int row = 0;
+            while ((line = br.readLine()) != null && row < 3) {
                 String[] data = line.split(",");
-                if (data.length >= 2) {
-                    try {
-                        // Skapa produkt baserat på rad-data
-                        Produkt product = createProductFromCSVLine(data);
-                        if (product != null) {
-                            products.add(product);
-                        }
-                    } catch (NumberFormatException e) {
-                        System.err.println("Fel vid parsning av data: " + line);
-                    }
+                if (data.length >= 3) {
+                    // Lägg till dryck
+                    String drinkName = data[0].trim();
+                    products.add(new Drink(drinkName, 20.0, 10));
+                    
+                    // Lägg till snacks
+                    String snackName = data[1].trim();
+                    products.add(new Snack(snackName, 10.0, 10));
+                    
+                    // Lägg till bok (ta bort citattecken)
+                    String bookName = data[2].replaceAll("\"", "").trim();
+                    String[] bookParts = bookName.split(" (?=\\d)"); // Dela vid siffror (för att hantera "5 st")
+                    bookName = bookParts[0].trim();
+                    products.add(new Pocketbok(bookName, 50.0, 5));
                 }
+                row++;
             }
         } catch (IOException e) {
             System.err.println("Fel vid läsning av CSV-fil: " + e.getMessage());
+            e.printStackTrace();
         }
+        
+        System.out.println("Antal inlästa produkter: " + products.size());
         return products;
-    }
-    
-    // Hjälpmetod för att skapa produkter från CSV-data
-    private static Produkt createProductFromCSVLine(String[] data) {
-        try {
-            String productInfo = data[0].trim();
-            int quantity = 0;
-            
-            // Extrahera antal från andra kolumnen
-            if (data.length > 1) {
-                String quantityStr = data[1].replaceAll("[^0-9]", "");
-                quantity = Integer.parseInt(quantityStr);
-            }
-            
-            // Extrahera pris och namn
-            String[] parts = productInfo.split(" ");
-            String name = parts[0];
-            double price = Double.parseDouble(parts[1].replaceAll("[^0-9.]", ""));
-            
-            // Skapa rätt typ av produkt baserat på produktinformationen
-            if (productInfo.toLowerCase().contains("dricka")) {
-                return new Drink(name, price, quantity);
-            } else if (productInfo.toLowerCase().contains("snacks")) {
-                return new Snack(name, price, quantity);
-            } else if (productInfo.toLowerCase().contains("bok")) {
-                return new Pocketbok(name, price, quantity);
-            }
-        } catch (Exception e) {
-            System.err.println("Fel vid skapande av produkt från CSV-data: " + e.getMessage());
-        }
-        return null;
     }
     
     // Loggar köp till fil
@@ -105,16 +81,6 @@ public class Filehandler {
             writer.write(logEntry);
         } catch (IOException e) {
             System.err.println("Fel vid loggning av köp: " + e.getMessage());
-        }
-    }
-    
-    // Hjälpmetod för att läsa in testdata
-    public static void loadInitialTestData(VMLogik logic) {
-        // Lägg till några testprodukter om ingen data finns
-        if (logic.getProducts().isEmpty()) {
-            logic.addProdukt(new Drink("Cola", 20.0, 10));
-            logic.addProdukt(new Snack("Chips", 10.0, 10));
-            logic.addProdukt(new Pocketbok("Sea of Tranquility", 50.0, 5));
         }
     }
 }

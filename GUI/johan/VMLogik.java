@@ -16,7 +16,9 @@ public class VMLogik implements Serializable{
 	}
 	
 	public void addProdukt(Produkt product) {
-		products.add(product);
+	    if (product != null) {
+	        products.add(product);
+	    }
 	}
 	public List<Produkt> getProducts(){
 		return products;
@@ -47,14 +49,21 @@ public class VMLogik implements Serializable{
         Filehandler.logPurchase(product);
     }
     public void restockProducts(List<Produkt> newProducts) {
-    	for(Produkt newProduct : newProducts) {
-    		boolean found = false;
-    		for (Produkt existingProduct : products) {
+        if (newProducts == null) return;
+        
+        for (Produkt newProduct : newProducts) {
+            boolean found = false;
+            for (Produkt existingProduct : products) {
                 if (existingProduct.getName().equals(newProduct.getName())) {
                     existingProduct.setQuantity(existingProduct.getQuantity() + newProduct.getQuantity());
                     found = true;
                     break;
-                }    	}
+                }
+            }
+            if (!found) {
+                products.add(newProduct);
+            }
+        }
     }
-    }}
+}
 
