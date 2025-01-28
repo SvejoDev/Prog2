@@ -1,69 +1,55 @@
 package johan;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VMLogik implements Serializable{
-	private List<Produkt> products;
-	private double balance;
-	
-	public VMLogik() {
-		products = new ArrayList<>();
-		balance = 0.0;
-	}
-	
-	public void addProdukt(Produkt product) {
-	    if (product != null) {
-	        products.add(product);
-	    }
-	}
-	public List<Produkt> getProducts(){
-		return products;
-	}
-	
-	public double getBalance() {
-		return balance;
-	}
-	public void addMoney (double amount) {
-		balance += amount;
-	}
-	
+public class VMLogik implements Serializable {
+    // Instansvariabler
+    private List<Produkt> products;      // Lista med alla produkter i automaten
+    private String csvfilepath;          // Sökväg till CSV-filen
+
+    // Konstruktor - skapar en tom produktlista
+    public VMLogik() {
+        products = new ArrayList<>();
+    }
+    
+    // Sätter sökvägen till CSV-filen
+    public void setCsvFilePath(String path) {
+        this.csvfilepath = path;
+    }
+    
+    // Lägger till en ny produkt i automaten
+    public void addProdukt(Produkt product) {
+        if (product != null) {
+            products.add(product);
+        }
+    }
+    
+    // Hämtar alla produkter
+    public List<Produkt> getProducts() {
+        return products;
+    }
+    
+    // Hanterar köp av en produkt
     public Produkt buyProduct(int index) {
+        // Kontrollerar att index är giltigt
         if (index < 0 || index >= products.size()) {
             return null;
         }
 
         Produkt product = products.get(index);
-        if (product.getQuantity() > 0 && balance >= product.getPrice()) {
+        // Kontrollerar att produkten finns i lager
+        if (product.getQuantity() > 0) {
             product.setQuantity(product.getQuantity() - 1);
-            balance -= product.getPrice();
-            logPurchase(product);
+            logPurchase(product);  // Loggar köpet
             return product;
         }
         return null;
     }
+
+    // Loggar ett köp via filehandler
     private void logPurchase(Produkt product) {
-        Filehandler.logPurchase(product);
-    }
-    public void restockProducts(List<Produkt> newProducts) {
-        if (newProducts == null) return;
-        
-        for (Produkt newProduct : newProducts) {
-            boolean found = false;
-            for (Produkt existingProduct : products) {
-                if (existingProduct.getName().equals(newProduct.getName())) {
-                    existingProduct.setQuantity(existingProduct.getQuantity() + newProduct.getQuantity());
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                products.add(newProduct);
-            }
-        }
+        filehandler.logPurchase(product);
     }
 }
-

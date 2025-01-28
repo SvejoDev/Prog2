@@ -1,10 +1,9 @@
 package johan;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -13,165 +12,180 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+public class vendingMachineGUI extends JFrame {
+    // Konstanter för fönstrets storlek (touch screen 500x500 enligt kravspec)
+    private static final int SCREEN_WIDTH = 500;
+    private static final int SCREEN_HEIGHT = 500;
 
-public class vendingMachineGUI extends JFrame{
-	private static final int SCREEN_WIDTH = 500;
-	private static final int SCREEN_HEIGHT = 500;
+    // GUI-komponenter
+    private JPanel mainpanel;           // Huvudpanelen som innehåller alla komponenter
+    private JButton[] productbuttons;   // Array med knappar för alla produkter
+    private JButton adminbutton;        // Knapp för att öppna admin-panelen
+    private VMLogik logic;             // Kopplingen till affärslogiken
+    private String csvfilepath;         // Sökväg till CSV-filen med produktdata
 
-	private JPanel mainPanel;
-	private JButton[] productButtons;
-	private JButton adminbutton;
-	private JLabel balanceLabel;
-	private VMLogik logic;
+    // Konstruktor - skapar och initierar hela användargränssnittet
+    public vendingMachineGUI() {
+        // Grundinställningar för fönstret
+        setTitle("Varuautomat");
+        setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);  // Låst storlek enligt kravspec
+        
+        // Skapar sökvägen till CSV-filen (finns i GUI-mappen)
+        String projectpath = System.getProperty("user.dir");
+        csvfilepath = projectpath + File.separator + "GUI" + File.separator + "products.csv";
+        
+        // Laddar sparat tillstånd eller skapar nytt via filehandler
+        logic = filehandler.loadState();
+        logic.setCsvFilePath(csvfilepath);
+        
+        // Bygger upp gränssnittet
+        initComponents();
+        layoutComponents();
+        updateProductButtons();
 
-	public vendingMachineGUI() {
-		setTitle("Varuautomat");
-		setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setResizable(false);
-		
-		logic = Filehandler.loadState();
-		initComponents();
-		layoutComponents();
-		updateProductButtons();
-
-		setVisible(true);
-		
-	    addWindowListener(new WindowAdapter() {
+        // Sparar automatiskt tillståndet när programmet stängs
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                Filehandler.saveState(logic);
+                filehandler.saveState(logic);
             }
         });
 
         setVisible(true);
     }
-	private void initComponents() {
-	    mainPanel = new JPanel();
-	    productButtons = new JButton[9];
-	    for(int i = 0; i < productButtons.length; i++) {
-	        final int index = i;
-	        productButtons[i] = new JButton();
-	        productButtons[i].addActionListener(e -> buyProduct(index));
-	    }
-	    
-	    adminbutton = new JButton("Admin");
-	    adminbutton.addActionListener(e -> showAdminPanel());
-	    balanceLabel = new JLabel("Totalt 0kr");
-	    
-	    // Ladda initiala produkter från CSV
-	    restockProducts();
-	    updateProductButtons();
-	}
-	
-	///Nu jävlar kommer alla knappars logik, inshalla!
 
-    private void updateProductButtons() {
-        for (int i = 0; i < productButtons.length; i++) {
-            if (i < logic.getProducts().size()) {
-                Produkt product = logic.getProducts().get(i);
-                productButtons[i].setText(String.format("<html>%s<br>%.2f kr<br>Antal: %d</html>",
-                        product.getName(), product.getPrice(), product.getQuantity()));
-                productButtons[i].setEnabled(product.getQuantity() > 0);
-            } else {
-                productButtons[i].setText("Tom");
-                productButtons[i].setEnabled(false);
-            }
+    // Skapar alla GUI-komponenter
+    private void initComponents() {
+        mainpanel = new JPanel();
+        
+        // Skapar 9 produktknappar (3x3 rutnät)
+        productbuttons = new JButton[9];
+        for (int i = 0; i < productbuttons.length; i++) {
+            final int index = i;
+            productbuttons[i] = new JButton();
+            productbuttons[i].addActionListener(e -> buyProduct(index));
         }
-        balanceLabel.setText(String.format("Totalt: %.2f kr", logic.getBalance()));
-    }
-
-    private void buyProduct(int index) {
-        Produkt boughtProduct = logic.buyProduct(index);
-        if (boughtProduct != null) {
-            JOptionPane.showMessageDialog(this,
-                    String.format("Du köpte %s för %.2f kr", boughtProduct.getName(), boughtProduct.getPrice()));
-            updateProductButtons();
-        } else {
-            JOptionPane.showMessageDialog(this, "Kunde inte köpa produkten. Kontrollera saldo och tillgänglighet.");
-        }
-    }
-
-    private void showAdminPanel() {
-        JDialog adminDialog = new JDialog(this, "Admin Panel", true);
-        adminDialog.setSize(300, 200);
-        adminDialog.setLayout(new GridLayout(3, 1));
-
-        JButton restockButton = new JButton("Fyll på produkter");
-        restockButton.addActionListener(e -> restockProducts());
-
-        JButton addMoneyButton = new JButton("Lägg till pengar");
-        addMoneyButton.addActionListener(e -> addMoney());
-
-        adminDialog.add(restockButton);
-        adminDialog.add(addMoneyButton);
-        adminDialog.setLocationRelativeTo(this);
-        adminDialog.setVisible(true);
-    }
-    
-    private void restockProducts() {
-        String projectPath = System.getProperty("user.dir");
-        String csvFile = projectPath + File.separator + "GUI" + File.separator + "products.csv";        List<Produkt> newProducts = Filehandler.loadProductsFromCSV(csvFile);
-        for (Produkt product : newProducts) {
-            logic.addProdukt(product);
-        }
+        
+        // Skapar admin-knappen
+        adminbutton = new JButton("Admin");
+        adminbutton.addActionListener(e -> showAdminPanel());
+        
+        // Laddar in produkter om automaten är tom
+        loadInitialProducts();
         updateProductButtons();
     }
 
-    private void addMoney() {
-        String input = JOptionPane.showInputDialog(this, "Ange belopp att lägga till:");
-        try {
-            double amount = Double.parseDouble(input);
-            logic.addMoney(amount);
-            updateProductButtons();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Ogiltigt belopp. Ange ett nummer.");
+    // Laddar initiala produkter från CSV om inga finns
+    private void loadInitialProducts() {
+        if (logic.getProducts().isEmpty()) {
+            List<Produkt> newproducts = filehandler.loadProductsFromCSV(csvfilepath);
+            for (Produkt product : newproducts) {
+                logic.addProdukt(product);
+            }
         }
     }
-	
-	private void layoutComponents() {
-		//gridbag såg häftigt ut i dokumentationen
-		mainPanel.setLayout(new GridBagLayout());
-		 GridBagConstraints gbc = new GridBagConstraints();
 
-		 //produkt buttons:
-		 for(int i = 0; i < productButtons.length; i++) {
-			 //inkopierat från docs:
-			  gbc.gridx = i % 3;
-	            gbc.gridy = i / 3;
-	            gbc.fill = GridBagConstraints.BOTH;
-	            gbc.weightx = 1.0;
-	            gbc.weighty = 1.0;
-	            gbc.insets = new Insets(5, 5, 5, 5);
-	            mainPanel.add(productButtons[i], gbc);
-		 }
-		   gbc.gridx = 0;
-	        gbc.gridy = 3;
-	        gbc.gridwidth = 2;
-	        gbc.weightx = 0.66;
-	        mainPanel.add(balanceLabel, gbc);
+    // Fyller på lagret genom att läsa in nya kvantiteter från CSV
+    private void restockFromCsv() {
+        // Läser in aktuella värden från CSV
+        List<Produkt> csvproducts = filehandler.loadProductsFromCSV(csvfilepath);
+        
+        // Uppdaterar kvantiteter för befintliga produkter
+        for (Produkt csvproduct : csvproducts) {
+            for (Produkt existingproduct : logic.getProducts()) {
+                if (existingproduct.getName().equals(csvproduct.getName())) {
+                    existingproduct.setQuantity(csvproduct.getQuantity());
+                    break;
+                }
+            }
+        }
+        
+        updateProductButtons();
+        JOptionPane.showMessageDialog(this, "Lagret har fyllts på från CSV-filen");
+    }
 
-	        gbc.gridx = 2;
-	        gbc.gridy = 3;
-	        gbc.gridwidth = 1;
-	        gbc.weightx = 0.33;
-	        mainPanel.add(adminbutton, gbc);
+    // Placerar ut alla komponenter i fönstret enligt ett rutnät
+    private void layoutComponents() {
+        mainpanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 
-	        setContentPane(mainPanel);
-		 }
-	   public static void main(String[] args) {
-	        SwingUtilities.invokeLater(new Runnable() {
-	            @Override
-	            public void run() {
-	                new vendingMachineGUI();
-	            }
-	        });
-	    }
+        // Lägger ut produktknapparna i ett 3x3 rutnät
+        for (int i = 0; i < productbuttons.length; i++) {
+            gbc.gridx = i % 3;        // x-position: 0, 1 eller 2
+            gbc.gridy = i / 3;        // y-position: 0, 1 eller 2
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weightx = 1.0;
+            gbc.weighty = 1.0;
+            gbc.insets = new Insets(5, 5, 5, 5);  // Mellanrum mellan knappar
+            mainpanel.add(productbuttons[i], gbc);
+        }
 
+        // Lägger till admin-knappen längst ner
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3;
+        gbc.weighty = 0.1;
+        mainpanel.add(adminbutton, gbc);
+
+        setContentPane(mainpanel);
+    }
+
+    // Uppdaterar alla produktknappar med aktuell information
+    private void updateProductButtons() {
+        for (int i = 0; i < productbuttons.length; i++) {
+            if (i < logic.getProducts().size()) {
+                Produkt product = logic.getProducts().get(i);
+                // Visar produktinfo med HTML-formatering för radbrytningar
+                productbuttons[i].setText(String.format("<html>%s<br>%.2f kr<br>Antal: %d</html>",
+                        product.getName(), product.getPrice(), product.getQuantity()));
+                // Inaktiverar knappen om produkten är slut
+                productbuttons[i].setEnabled(product.getQuantity() > 0);
+            } else {
+                productbuttons[i].setText("Tom");
+                productbuttons[i].setEnabled(false);
+            }
+        }
+    }
+
+    // Hanterar köp av en produkt
+    private void buyProduct(int index) {
+        Produkt boughtproduct = logic.buyProduct(index);
+        if (boughtproduct != null) {
+            JOptionPane.showMessageDialog(this,
+                    String.format("Du köpte %s", boughtproduct.getName()));
+            updateProductButtons();
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                "Kunde inte köpa produkten. Kontrollera tillgänglighet.");
+        }
+    }
+
+    // Visar admin-panelen med påfyllningsfunktion
+    private void showAdminPanel() {
+        JDialog admindialog = new JDialog(this, "Admin Panel", true);
+        admindialog.setSize(300, 100);
+        admindialog.setLayout(new GridLayout(1, 1));
+
+        JButton restockbutton = new JButton("Fyll på från CSV");
+        restockbutton.addActionListener(e -> {
+            restockFromCsv();
+            admindialog.dispose();  // Stänger admin-panelen efter påfyllning
+        });
+
+        admindialog.add(restockbutton);
+        admindialog.setLocationRelativeTo(this);
+        admindialog.setVisible(true);
+    }
+
+    // Huvudmetod som startar programmet
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new vendingMachineGUI());
+    }
 }

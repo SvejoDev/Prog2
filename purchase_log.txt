@@ -1,4 +1,9 @@
-2024-11-12 14:23:26 - Köpt: Nuts, Pris: 10,00 kr, Moms: 1,20 kr
-2024-11-12 14:23:28 - Köpt: Nuts, Pris: 10,00 kr, Moms: 1,20 kr
-2024-11-12 14:23:30 - Köpt: Gum, Pris: 10,00 kr, Moms: 1,20 kr
-2024-11-12 14:23:31 - Köpt: Gum, Pris: 10,00 kr, Moms: 1,20 kr
+2025-01-28 13:12:58 - Köpt: Nuts, Pris: 10,00 kr, Moms: 1,20 kr
+2025-01-28 13:12:59 - Köpt: The glass hotel, Pris: 50,00 kr, Moms: 3,00 kr
+2025-01-28 13:13:04 - Köpt: The glass hotel, Pris: 50,00 kr, Moms: 3,00 kr
+2025-01-28 13:13:06 - Köpt: Nuts, Pris: 10,00 kr, Moms: 1,20 kr
+2025-01-28 13:15:16 - Köpt: The glass hotel, Pris: 50,00 kr, Moms: 3,00 kr
+2025-01-28 13:15:18 - Köpt: Nuts, Pris: 10,00 kr, Moms: 1,20 kr
+2025-01-28 13:20:15 - Köpt: Sea of tranquility, Pris: 50,00 kr, Moms: 3,00 kr
+2025-01-28 13:20:16 - Köpt: Sea of tranquility, Pris: 50,00 kr, Moms: 3,00 kr
+2025-01-28 13:20:18 - Köpt: Nuts, Pris: 10,00 kr, Moms: 1,20 kr
