@@ -1,11 +1,13 @@
 # Vending Machine GUI Java Prog2
 
+Ett projekt i Programmering 2 där jag har skapat en varuautomat med Java Swing.
+
 ## UML-diagram Notation
 | Symbol | Betydelse | Exempel |
 |--------|-----------|---------|
-| `-` | Private medlemmar | `-name: String` |
-| `+` | Public medlemmar | `+getName(): String` |
-| `*` | Abstrakt metod | `+getType()* String` |
+| `-` | Private medlemmar | `-name : String` |
+| `+` | Public medlemmar | `+getName() : String` |
+| `*` | Abstrakt metod | `+getType()** : String` |
 | `<<abstract>>` | Abstrakt klass | `<<abstract>> Produkt` |
 
 ## UML-diagram
@@ -18,30 +20,30 @@ classDiagram
     }
     class VMLogik {
         -List~Produkt~ products
-        +buyProduct(int) Produkt
-        +getProducts() List
+        +buyProduct(int) : Produkt
+        +getProducts() : List
     }
     class filehandler {
-        +loadProductsFromCSV() List
+        +loadProductsFromCSV() : List
         +saveState(VMLogik)
-        +loadState() VMLogik
+        +loadState() : VMLogik
     }
     class Produkt {
         <<abstract>>
-        -String name
-        -double price
-        -int quantity
-        -double taxRate
-        +getType()* String
+        -name : String
+        -price : double
+        -quantity : int
+        -taxRate : double
+        +getType()** : String
     }
     class Drink {
-        +getType() String
+        +getType() : String
     }
     class Snack {
-        +getType() String
+        +getType() : String
     }
     class Pocketbok {
-        +getType() String
+        +getType() : String
     }
     Produkt <|-- Drink : ärver
     Produkt <|-- Snack : ärver
